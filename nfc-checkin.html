@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>NFC Check-In</title>
+  </head>
+  <body>
+    <h2>NFC Check-In</h2>
+    <button id="scan">Scan NFC</button>
+    <p id="status"></p>
+
+    <script>
+      document.getElementById('scan').addEventListener('click', async () => {
+        try {
+          const reader = new NDEFReader();
+          await reader.scan();
+          document.getElementById('status').textContent = 'Scanning...';
+
+          reader.onreading = (event) => {
+            const nfcId = event.serialNumber;
+            document.getElementById('status').textContent = 'Scanned: ' + nfcId;
+
+            fetch("YOUR_WEB_APP_URL_HERE", {
+              method: "POST",
+              headers: { "Content-Type": "application/x-www-form-urlencoded" },
+              body: "nfcId=" + encodeURIComponent(nfcId)
+            });
+          };
+        } catch (error) {
+          document.getElementById('status').textContent = 'Error: ' + error;
+        }
+      });
+    </script>
+  </body>
+</html>
